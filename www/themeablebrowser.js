@@ -46,6 +46,10 @@ ThemeableBrowser.prototype = {
         exec(null, null, 'ThemeableBrowser', 'reload', []);
         return this;
     },
+    stopLoading: function (eventname) {
+        exec(null, null, 'ThemeableBrowser', 'stopLoading', []);
+        return this;
+    },
     goBack: function (eventname) {
         exec(null, null, 'ThemeableBrowser', 'goBack', []);
         return this;

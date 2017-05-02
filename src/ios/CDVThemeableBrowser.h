@@ -78,6 +78,7 @@
 - (void)show:(CDVInvokedUrlCommand*)command withAnimation:(BOOL)animated;
 - (void)reload:(CDVInvokedUrlCommand*)command;
 - (void)goBack:(CDVInvokedUrlCommand*)command;
+- (void)stopLoading:(CDVInvokedUrlCommand*)command;
 
 @end
 
@@ -118,6 +119,7 @@
 - (void)close;
 - (void)reload;
 - (void)goBack;
+- (void)stopLoading;
 - (void)navigateTo:(NSURL*)url;
 - (void)showLocationBar:(BOOL)show;
 - (void)showToolBar:(BOOL)show : (NSString*) toolbarPosition;

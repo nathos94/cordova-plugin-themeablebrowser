@@ -177,6 +177,13 @@
     }
 }
 
+- (void)stopLoading:(CDVInvokedUrlCommand*)command
+{
+    if (self.themeableBrowserViewController) {
+        [self.themeableBrowserViewController stopLoading];
+    }
+}
+
 - (CDVThemeableBrowserOptions*)parseOptions:(NSString*)options
 {
     CDVThemeableBrowserOptions* obj = [[CDVThemeableBrowserOptions alloc] init];
@@ -1216,6 +1223,11 @@
             [self.webView loadRequest:request];
         }];
     }
+}
+
+- (void)stopLoading
+{
+    [self.webView stopLoading];
 }
 
 - (void)goBack
