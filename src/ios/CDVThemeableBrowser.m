@@ -1218,6 +1218,15 @@
     }
 }
 
+- (void)goBack
+{
+    if (self.webView.canGoBack) {
+        [self.webView goBack];
+    } else if (_browserOptions.backButtonCanClose) {
+        [self close];
+    }
+}
+
 - (void)goBack:(id)sender
 {
     [self emitEventForButton:_browserOptions.backButton];
