@@ -170,6 +170,13 @@
     }
 }
 
+- (void)goBack:(CDVInvokedUrlCommand*)command
+{
+    if (self.themeableBrowserViewController) {
+        [self.themeableBrowserViewController goBack];
+    }
+}
+
 - (CDVThemeableBrowserOptions*)parseOptions:(NSString*)options
 {
     CDVThemeableBrowserOptions* obj = [[CDVThemeableBrowserOptions alloc] init];
