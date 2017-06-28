@@ -1465,6 +1465,8 @@
 
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
+    [self.navigationDelegate webViewDidFinishLoad:theWebView];
+
     // update url, stop spinner, update back/forward
 
     self.addressLabel.text = [self.currentURL absoluteString];
@@ -1496,7 +1498,6 @@
         [CDVUserAgentUtil setUserAgent:_prevUserAgent lockToken:_userAgentLockToken];
     }
 
-    [self.navigationDelegate webViewDidFinishLoad:theWebView];
 }
 
 - (void)webView:(UIWebView*)theWebView didFailLoadWithError:(NSError*)error
