@@ -1647,6 +1647,19 @@
     [super viewDidLoad];
 }
 
+- (CGRect) invertFrameIfNeeded:(CGRect)rect {
+    // We need to invert since on iOS 7 frames are always in Portrait context
+    if (!IsAtLeastiOSVersion(@"8.0")) {
+        if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])) {
+            CGFloat temp = rect.size.width;
+            rect.size.width = rect.size.height;
+            rect.size.height = temp;
+        }
+        rect.origin = CGPointZero;
+    }
+    return rect;
+}
+
 - (BOOL)shouldAutorotate
 {
     if ((self.orientationDelegate != nil) && [self.orientationDelegate respondsToSelector:@selector(shouldAutorotate)]) {
