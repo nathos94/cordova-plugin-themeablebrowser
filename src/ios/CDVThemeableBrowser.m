@@ -56,6 +56,7 @@
 
 #define    TOOLBAR_DEF_HEIGHT 44.0
 #define    LOCATIONBAR_HEIGHT 21.0
+#define    STATUSBAR_HEIGHT 20.0
 #define    FOOTER_HEIGHT ((TOOLBAR_HEIGHT) + (LOCATIONBAR_HEIGHT))
 
 #pragma mark CDVThemeableBrowser
@@ -109,17 +110,17 @@
 
 - (BOOL) isSystemUrl:(NSURL*)url
 {
-  NSDictionary *systemUrls = @{
-    @"itunes.apple.com": @YES,
-    @"search.itunes.apple.com": @YES,
-    @"appsto.re": @YES
-  };
+    NSDictionary *systemUrls = @{
+                                 @"itunes.apple.com": @YES,
+                                 @"search.itunes.apple.com": @YES,
+                                 @"appsto.re": @YES
+                                 };
 
-  if (systemUrls[[url host]]) {
-    return YES;
-  }
+    if (systemUrls[[url host]]) {
+        return YES;
+    }
 
-  return NO;
+    return NO;
 }
 
 - (void)open:(CDVInvokedUrlCommand*)command
@@ -211,7 +212,7 @@
         }
     } else {
         [self emitWarning:kThemeableBrowserEmitCodeUndefined
-            withMessage:@"No config was given, defaults will be used, which is quite boring."];
+              withMessage:@"No config was given, defaults will be used, which is quite boring."];
     }
 
     return obj;
@@ -339,7 +340,7 @@
     _isShown = YES;
 
     CDVThemeableBrowserNavigationController* nav = [[CDVThemeableBrowserNavigationController alloc]
-                                   initWithRootViewController:self.themeableBrowserViewController];
+                                                    initWithRootViewController:self.themeableBrowserViewController];
     nav.orientationDelegate = self.themeableBrowserViewController;
     nav.navigationBarHidden = YES;
     // Run later to avoid the "took a long time" log message.
@@ -515,30 +516,30 @@
             return NO;
         }
     } else if ([self isSystemUrl:url]) {
-      // Do not allow iTunes store links from ThemeableBrowser as they do not work
-      // instead open them with App Store app or Safari
-      [[UIApplication sharedApplication] openURL:url];
+        // Do not allow iTunes store links from ThemeableBrowser as they do not work
+        // instead open them with App Store app or Safari
+        [[UIApplication sharedApplication] openURL:url];
 
-      // only in the case where a redirect link is opened in a freshly started
-      // ThemeableBrowser frame, trigger ThemeableBrowserRedirectExternalOnOpen
-      // event. This event can be handled in the app-side -- for instance, to
-      // close the ThemeableBrowser as the frame will contain a blank page
-      if (
-        originalUrl != nil
-        && [[originalUrl absoluteString] isEqualToString:[initUrl absoluteString]]
-        && _framesOpened == 1
-      ) {
-        NSDictionary *event = @{
-          @"type": @"ThemeableBrowserRedirectExternalOnOpen",
-          @"message": @"ThemeableBrowser redirected to open an external app on fresh start"
-        };
+        // only in the case where a redirect link is opened in a freshly started
+        // ThemeableBrowser frame, trigger ThemeableBrowserRedirectExternalOnOpen
+        // event. This event can be handled in the app-side -- for instance, to
+        // close the ThemeableBrowser as the frame will contain a blank page
+        if (
+            originalUrl != nil
+            && [[originalUrl absoluteString] isEqualToString:[initUrl absoluteString]]
+            && _framesOpened == 1
+            ) {
+            NSDictionary *event = @{
+                                    @"type": @"ThemeableBrowserRedirectExternalOnOpen",
+                                    @"message": @"ThemeableBrowser redirected to open an external app on fresh start"
+                                    };
 
-        [self emitEvent:event];
-      }
+            [self emitEvent:event];
+        }
 
-      // do not load content in the web view since this URL is handled by an
-      // external app
-      return NO;
+        // do not load content in the web view since this URL is handled by an
+        // external app
+        return NO;
     } else if ((self.callbackId != nil) && isTopLevelNavigation) {
         // Send a loadstart event for each top-level navigation (includes redirects).
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
@@ -629,10 +630,10 @@
 - (void)emitError:(NSString*)code withMessage:(NSString*)message
 {
     NSDictionary *event = @{
-        @"type": kThemeableBrowserEmitError,
-        @"code": code,
-        @"message": message
-    };
+                            @"type": kThemeableBrowserEmitError,
+                            @"code": code,
+                            @"message": message
+                            };
 
     [self emitEvent:event];
 }
@@ -640,10 +641,10 @@
 - (void)emitWarning:(NSString*)code withMessage:(NSString*)message
 {
     NSDictionary *event = @{
-       @"type": kThemeableBrowserEmitWarning,
-       @"code": code,
-       @"message": message
-    };
+                            @"type": kThemeableBrowserEmitWarning,
+                            @"code": code,
+                            @"message": message
+                            };
 
     [self emitEvent:event];
 }
@@ -684,9 +685,7 @@
     BOOL toolbarIsAtBottom = ![_browserOptions.toolbarposition isEqualToString:kThemeableBrowserToolbarBarPositionTop];
     NSDictionary* toolbarProps = _browserOptions.toolbar;
     CGFloat toolbarHeight = [self getFloatFromDict:toolbarProps withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
-    if (!_browserOptions.fullscreen) {
-        webViewBounds.size.height -= toolbarHeight;
-    }
+    webViewBounds.size.height -= TOOLBAR_DEF_HEIGHT;
     self.webView = [[UIWebView alloc] initWithFrame:webViewBounds];
 
     self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
@@ -738,8 +737,8 @@
 
     if (toolbarProps[kThemeableBrowserPropImage] || toolbarProps[kThemeableBrowserPropWwwImage]) {
         UIImage *image = [self getImage:toolbarProps[kThemeableBrowserPropImage]
-                               altPath:toolbarProps[kThemeableBrowserPropWwwImage]
-                               altDensity:[toolbarProps[kThemeableBrowserPropWwwImageDensity] doubleValue]];
+                                altPath:toolbarProps[kThemeableBrowserPropWwwImage]
+                             altDensity:[toolbarProps[kThemeableBrowserPropWwwImageDensity] doubleValue]];
 
         if (image) {
             self.toolbar.backgroundColor = [UIColor colorWithPatternImage:image];
@@ -942,8 +941,8 @@
         UIImage *buttonImage = nil;
         if (buttonProps[kThemeableBrowserPropImage] || buttonProps[kThemeableBrowserPropWwwImage]) {
             buttonImage = [self getImage:buttonProps[kThemeableBrowserPropImage]
-                                altPath:buttonProps[kThemeableBrowserPropWwwImage]
-                                altDensity:[buttonProps[kThemeableBrowserPropWwwImageDensity] doubleValue]];
+                                 altPath:buttonProps[kThemeableBrowserPropWwwImage]
+                              altDensity:[buttonProps[kThemeableBrowserPropWwwImageDensity] doubleValue]];
 
             if (!buttonImage) {
                 [self.navigationDelegate emitError:kThemeableBrowserEmitCodeLoadFail
@@ -954,14 +953,14 @@
             }
         } else {
             [self.navigationDelegate emitWarning:kThemeableBrowserEmitCodeUndefined
-                                 withMessage:[NSString stringWithFormat:@"Image for %@ is not defined. Button will not be shown.", description]];
+                                     withMessage:[NSString stringWithFormat:@"Image for %@ is not defined. Button will not be shown.", description]];
         }
 
         UIImage *buttonImagePressed = nil;
         if (buttonProps[kThemeableBrowserPropImagePressed] || buttonProps[kThemeableBrowserPropWwwImagePressed]) {
             buttonImagePressed = [self getImage:buttonProps[kThemeableBrowserPropImagePressed]
-                                       altPath:buttonProps[kThemeableBrowserPropWwwImagePressed]
-                                       altDensity:[buttonProps[kThemeableBrowserPropWwwImageDensity] doubleValue]];;
+                                        altPath:buttonProps[kThemeableBrowserPropWwwImagePressed]
+                                     altDensity:[buttonProps[kThemeableBrowserPropWwwImageDensity] doubleValue]];;
 
             if (!buttonImagePressed) {
                 [self.navigationDelegate emitError:kThemeableBrowserEmitCodeLoadFail
@@ -972,7 +971,7 @@
             }
         } else {
             [self.navigationDelegate emitWarning:kThemeableBrowserEmitCodeUndefined
-                             withMessage:[NSString stringWithFormat:@"Pressed image for %@ is not defined.", description]];
+                                     withMessage:[NSString stringWithFormat:@"Pressed image for %@ is not defined.", description]];
         }
 
         if (buttonImage) {
@@ -1106,7 +1105,7 @@
 {
     CGRect toolbarFrame = self.toolbar.frame;
     CGRect locationbarFrame = self.addressLabel.frame;
-    CGFloat toolbarHeight = [self getFloatFromDict:_browserOptions.toolbar withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
+    CGFloat toolbarHeight = TOOLBAR_DEF_HEIGHT;
 
     BOOL locationbarVisible = !self.addressLabel.hidden;
 
@@ -1280,20 +1279,20 @@
                                                   message:nil
                                                   preferredStyle:UIAlertControllerStyleActionSheet];
             alertController.popoverPresentationController.sourceView
-                    = self.menuButton;
+            = self.menuButton;
             alertController.popoverPresentationController.sourceRect
-                    = self.menuButton.bounds;
+            = self.menuButton.bounds;
 
             for (NSInteger i = 0; i < menuItems.count; i++) {
                 NSInteger index = i;
                 NSDictionary *item = menuItems[index];
 
                 UIAlertAction *a = [UIAlertAction
-                                     actionWithTitle:item[@"label"]
-                                     style:UIAlertActionStyleDefault
-                                     handler:^(UIAlertAction *action) {
-                                         [self menuSelected:index];
-                                     }];
+                                    actionWithTitle:item[@"label"]
+                                    style:UIAlertActionStyleDefault
+                                    handler:^(UIAlertAction *action) {
+                                        [self menuSelected:index];
+                                    }];
                 [alertController addAction:a];
             }
 
@@ -1364,7 +1363,7 @@
 
 - (void) rePositionViews {
     CGFloat toolbarHeight = [self getFloatFromDict:_browserOptions.toolbar withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
-    CGFloat webviewOffset = _browserOptions.fullscreen ? 0.0 : toolbarHeight;
+    CGFloat webviewOffset = [self getStatusBarOffset] + self.toolbar.frame.size.height;
 
     if ([_browserOptions.toolbarposition isEqualToString:kThemeableBrowserToolbarBarPositionTop]) {
         [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, self.webView.frame.size.height)];
@@ -1473,8 +1472,8 @@
     [self updateButton:theWebView];
 
     if (self.titleLabel && _browserOptions.title
-            && !_browserOptions.title[kThemeableBrowserPropStaticText]
-            && [self getBoolFromDict:_browserOptions.title withKey:kThemeableBrowserPropShowPageTitle]) {
+        && !_browserOptions.title[kThemeableBrowserPropStaticText]
+        && [self getBoolFromDict:_browserOptions.title withKey:kThemeableBrowserPropShowPageTitle]) {
         // Update title text to page title when title is shown and we are not
         // required to show a static text.
         self.titleLabel.text = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
@@ -1585,9 +1584,9 @@
     [scanner scanHexInt:&rgbaVal];
 
     return [UIColor colorWithRed:(rgbaVal >> 24 & 0xFF) / 255.0f
-        green:(rgbaVal >> 16 & 0xFF) / 255.0f
-        blue:(rgbaVal >> 8 & 0xFF) / 255.0f
-        alpha:(rgbaVal & 0xFF) / 255.0f];
+                           green:(rgbaVal >> 16 & 0xFF) / 255.0f
+                            blue:(rgbaVal >> 8 & 0xFF) / 255.0f
+                           alpha:(rgbaVal & 0xFF) / 255.0f];
 }
 
 @end
@@ -1640,6 +1639,14 @@
     }
 }
 
+- (void) viewDidLoad {
+
+    CGRect statusBarFrame = [self invertFrameIfNeeded:[UIApplication sharedApplication].statusBarFrame];
+    statusBarFrame.size.height = STATUSBAR_HEIGHT;
+
+    [super viewDidLoad];
+}
+
 - (BOOL)shouldAutorotate
 {
     if ((self.orientationDelegate != nil) && [self.orientationDelegate respondsToSelector:@selector(shouldAutorotate)]) {
@@ -1668,3 +1675,4 @@
 
 
 @end
+
